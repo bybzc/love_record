@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👸&🐕</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+    <div class="wrap" id="wrap">
+        <div class="wrap-son">
+            <div class="container-fluid">
+                <div class="box">
+                    <div class="jumbotron text-center">
+                        <h1>我们相恋了</h1>
+                        <h3 class="timer">
+                            <div class="row">
+                                <b id="d"></b> 天 <b id="h"></b> 时 <b id="m"></b> 分
+                            </div>
+                            <div class="row">
+                                <b id="s"></b> 秒
+                            </div>
+                        </h3>
+                        <p>
+                            <a id="to_comments" class="btn btn-primary btn-lg" role="button">留个言吧</a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <h4 class="love text-center"><span class="love-son"></span></h4>
+                </div>
+                <div id="hans-bolang"></div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-group">
+                <label for="message">我亲爱的李青盈女士，你今天有什么想对我说的吗?</label>
+                <br>
+                <textarea id="message" name="message" placeholder="在这里输入您的留言"></textarea>
+                <div class="image-upload form-group">
+                    <div class="label-container">
+                        <label for="message" class="label" style="color: #333;font-size: 14px;">选择你的心情美照！</label>
+                    </div>
+                    <div class="input-container">
+                        <input type="file" id="image" name="image" accept="image/*" class="input-file">
+                    </div>
+                    <div class="button-container">
+                        <button type="button" onclick="submitMessage()" class="submit-button"
+                            style="margin-left: 55%;">提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="message-board" id="messageBoard"></div>
+    </div>
+
+    <script src="js/jquery-1.11.0.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src='js/xlsx.full.min.js'></script>
+    <script src="js/axios.min.js"></script>
+    <script src="js/script.js"></script>
+
+    <!-- 计时器 -->
+    <script>
+        function timer() {
+            let start = new Date("2023-11-4 0:45:00"); // 恋爱开始时间
+            let t = new Date() - start;
+            let h = ~~(t / 1000 / 60 / 60 % 24);
+            if (h < 10) {
+                h = "0" + h;
+            }
+            let m = ~~(t / 1000 / 60 % 60);
+            if (m < 10) {
+                m = "0" + m;
+            }
+
+            let s = ~~(t / 1000 % 60);
+            if (s < 10) {
+                s = "0" + s;
+            }
+            document.getElementById('d').innerHTML = ~~(t / 1000 / 60 / 60 / 24);
+            document.getElementById('h').innerHTML = h;
+            document.getElementById('m').innerHTML = m;
+            document.getElementById('s').innerHTML = s;
+        }
+        timer();
+        setInterval(timer, 1000);
+    </script>
+    <script>
+        var oComments = document.querySelector("#message");
+        var end = Math.round(oComments.offsetTop);
+        var isScrolling = false; // 添加一个标记来表示是否正在执行滚动动画
+        var timer; // 定时器变量
+
+        function move() {
+            if (isScrolling) return; // 如果正在执行滚动动画，则不触发新的滚动
+            isScrolling = true; // 标记为正在执行滚动动画
+
+            clearInterval(timer);
+            timer = setInterval(function () {
+                var start = document.documentElement.scrollTop || document.body.scrollTop;
+                start = Math.round(start);
+                var speed = (end - start) / 20;
+
+                if (speed > 0) {
+                    speed = Math.ceil(speed);
+                } else {
+                    speed = Math.floor(speed);
+                }
+
+                document.documentElement.scrollTop = document.body.scrollTop = start + speed + 1;
+
+                if (start >= end) {
+                    clearInterval(timer);
+                    isScrolling = false; // 动画执行完毕后标记为非滚动状态
+                }
+            }, 20);
+        }
+
+        to_comments.onclick = move;
+
+        // 添加鼠标滚轮事件监听器
+        document.addEventListener('wheel', function () {
+            clearInterval(timer); // 清除定时器
+            isScrolling = false; // 将滚动状态标记为 false
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            setBackgrount();
+            populateMessages(); // 调用 populateMessages 函数加载消息
+        });
+    </script>
+</body>
+
+</html>
